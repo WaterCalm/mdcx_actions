@@ -8,13 +8,10 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # Needed to fetch tags
-
-      - name: Checkout target tag
+      - name: Clone external repository
         run: |
+          git clone https://github.com/sqzw-x/mdcx.git
+          cd mdcx
           git fetch --tags
           git checkout 120250810
 
@@ -25,30 +22,33 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd mdcx
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Make build.sh executable
-        run: chmod +x scripts/build.sh
+        run: chmod +x mdcx/scripts/build.sh
 
       - name: Build app
-        run: ./scripts/build.sh
+        run: |
+          cd mdcx
+          ./scripts/build.sh
 
       - name: Rename output EXE to MDCx
         run: |
-          cd dist
+          cd mdcx/dist
           exe_file=$(ls *.exe | head -n 1)
           echo "Found exe: $exe_file"
           mv "$exe_file" MDCx
 
       - name: Zip MDCx
         run: |
-          cd dist
+          cd mdcx/dist
           zip -r MDCx_120250810.zip MDCx
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MDCx_120250810
-          path: dist/MDCx_120250810.zip
+          path: mdcx/dist/MDCx_120250810.zip
           compression-level: 0
