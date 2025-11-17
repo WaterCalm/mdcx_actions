@@ -41,14 +41,9 @@ jobs:
           echo "Found exe: $exe_file"
           mv "$exe_file" MDCx
 
-      - name: Zip MDCx
-        run: |
-          cd mdcx/dist
-          zip -r MDCx_120250810.zip MDCx
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MDCx_120250810
-          path: mdcx/dist/MDCx_120250810.zip
+          path: mdcx/dist/MDCx
           compression-level: 0
